@@ -11,8 +11,8 @@ To install, use the following commands (assuming `/var/www/` is your hub's web r
 
 ```
 cd /var/www/
-util/add_addon_repo https://gitlab.com/zot/hubzilla-plugins.git plugins
-util/update_addon_repo plugins
+util/add_addon_repo https://github.com/sasiflo/hubzilla-addons-sasiflo.git addons_sasiflo
+util/update_addon_repo addons_sasiflo
 ```
 Then enable the individual plugins through the admin settings interface.
 
