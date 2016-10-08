@@ -6,7 +6,6 @@ This is a repository of **addons** (also known as **plugins**) that extend the f
 
 ### Installation
 
-
 To install, use the following commands (assuming `/var/www/` is your hub's web root):
 
 ```
