@@ -11,6 +11,9 @@
  */
 
 
+use \Zotlabs\Storage;
+
+    
 function musicloud_module() { return; }
 
 
@@ -45,7 +48,7 @@ function musicloud_settings(&$output) {
 
 	$output .= replace_macros(
 		get_markup_template('generic_addon_settings.tpl'), array(
-			'$addon' => array('musicloud', t('Hubzilla Ampache API Settings'), '', t('Submit')),
+			'$addon' => array('musicloud', t('Hubzilla MusiCloud API Settings'), '', t('Submit')),
             '$content' => $content
 		)
 	);
@@ -83,9 +86,20 @@ function musicloud_content(&$a){
 	if(!$id)
 		return;
 
-    $base_folder = get_pconfig($id, 'musicloud', 'base_folder');
+    $folder_base = '/' . get_pconfig($id, 'musicloud', 'base_folder');
+    if (folder_exists($folder_base)) {
+        $folder_listing = 'Found folder "' . $folder_base . '".';
+    } else {
+        $folder_listing = 'No such folder "' . $folder_base .'" found.';
+    }
 
-    $output = '<h2>Base-Folder: ' . $base_folder . '</h2>';
+    $folder_auth = new \Zotlabs\Storage\BasicAuth();
+    $folder_directory = new \Zotlabs\Storage\Directory($folder_base, $folder_auth);
+            
+    $output .= '<h2>Base-Folder: ' . $folder_base . '</h2>';
+    $output .= '<pre>';
+    $output .= $folder_listing;
+    $output .= '</pre>';
 
 	logger("musicloud_content(): end function.", LOGGER_INFO);
 
