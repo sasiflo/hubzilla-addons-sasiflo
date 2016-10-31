@@ -1,0 +1,97 @@
+<?php
+/**
+ * Name: hubzilla_ampache_api
+ * Description: A plugin to privide access to filestorage directory hierarchy through the Ampache API.
+ * Version: 0.1
+ * Depends: None
+ * Recommends: None
+ * Category: API
+ * Author: sasiflo <dev@sasiflo.de>
+ * Maintainer: sasiflo <dev@sasiflo.de>
+ */
+
+
+function hubzilla_ampache_api_module() { return; }
+
+
+function hubzilla_ampache_api_load() {
+	Zotlabs\Extend\Hook::register('feature_settings', 'addon/hubzilla_ampache_api/hubzilla_ampache_api.php', 'hubzilla_ampache_api_settings');
+	Zotlabs\Extend\Hook::register('feature_settings_post', 'addon/hubzilla_ampache_api/hubzilla_ampache_api.php', 'hubzilla_ampache_api_settings_post');
+}
+
+
+function hubzilla_ampache_api_unload() {
+	Zotlabs\Extend\Hook::unregister_by_file('addon/hubzilla_ampache_api/hubzilla_ampache_api.php');
+}
+
+
+
+function hubzilla_ampache_api_settings(&$output) {
+	$id = local_channel();
+	if (!$id)
+		return;
+
+    $base_folder = get_pconfig($id, 'hubzilla_ampache_api', 'base_folder');
+
+
+	$content = replace_macros(
+		get_markup_template('field_input.tpl'), array(
+			'$field' => array(
+				'base_folder', t('Base folder'), $base_folder, t('The base folder of the music library accessible through Ampache API relative to the cloud root folder. Example: public/music')
+			)
+		)
+	);
+
+
+	$output .= replace_macros(
+		get_markup_template('generic_addon_settings.tpl'), array(
+			'$addon' => array('hubzilla_ampache_api', t('Hubzilla Ampache API Settings'), '', t('Submit')),
+            '$content' => $content
+		)
+	);
+
+}
+
+function hubzilla_ampache_api_settings_post($post) {
+	logger("hubzilla_ampache_api_settings_post() post=" . print_r($post, true), LOGGER_INFO);
+	$id = local_channel();
+	if (!$id)
+		return;
+
+	if($post['hubzilla_ampache_api-submit']) {
+		set_pconfig($id, 'hubzilla_ampache_api', 'base_folder', dbesc($post['base_folder']));
+	}
+
+}
+
+
+function hubzilla_ampache_api_plugin_admin(&$a, &$output) {
+	logger("hubzilla_ampache_api_plugin_admin() with output=" . print_r($output, true), LOGGER_INFO);
+
+	$output .= '<H3>Hello!</H3>';
+}
+
+function hubzilla_ampache_api_plugin_admin_post($a) {
+	logger("hubzilla_ampache_api_plugin_admin_post() with a=" . print_r($a, true), LOGGER_INFO);
+}
+
+
+function hubzilla_ampache_api_content(&$a){
+	logger("hubzilla_ampache_api_content(): begin function.", LOGGER_INFO);
+
+	$id = local_channel();
+	if(!$id)
+		return;
+
+    $base_folder = get_pconfig($id, 'hubzilla_ampache_api', 'base_folder');
+
+    $output = '<h2>Base-Folder: ' . $base_folder . '</h2>';
+
+	logger("hubzilla_ampache_api_content(): end function.", LOGGER_INFO);
+
+    return $output;
+}
+
+
+
+
